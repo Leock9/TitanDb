@@ -34,7 +34,7 @@ jobs:
         run: terraform init -var="DB_USERNAME=${DB_USERNAME}" -var="DB_PASSWORD=${DB_PASSWORD}"
 
       - name: Formatar Terraform
-        run: terraform fmt -var="DB_USERNAME=${DB_USERNAME}" -var="DB_PASSWORD=${DB_PASSWORD}"
+        run: terraform fmt
 
       - name: Validar Terraform
         run: terraform validate -var="DB_USERNAME=${DB_USERNAME}" -var="DB_PASSWORD=${DB_PASSWORD}"
