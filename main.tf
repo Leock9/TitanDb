@@ -8,7 +8,7 @@ resource "aws_db_instance" "postgres_db" {
   identifier             = "pgdb"
   instance_class         = "db.t4g.micro"
   engine                 = "postgres"
-  db_name                = "db-burger"
+  db_name                = "dbBurger"
   username               = var.DB_USERNAME
   password               = var.DB_PASSWORD
   vpc_security_group_ids = [aws_security_group.sg.id]
