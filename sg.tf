@@ -1,6 +1,14 @@
+variable "create_security_group" {
+  type        = bool
+  description = "Whether to create a new security group"
+  default     = true
+}
+
 resource "aws_security_group" "sg" {
+  count = var.create_security_group == true ? 1 : 0
+
   name        = "SG-${var.projectName}"
-  vpc_id = var.vpcId
+  vpc_id      = var.vpcId
 
   ingress {
     description = "All"
@@ -17,7 +25,7 @@ resource "aws_security_group" "sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  
+
   egress {
     description = "All"
     from_port   = 0
@@ -25,4 +33,15 @@ resource "aws_security_group" "sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+}
+
+data "aws_security_group" "sg" {
+  count = var.create_security_group == false ? 1 : 0
+
+  name        = "SG-${var.projectName}"
+  vpc_id      = var.vpcId
+}
+
+output "security_group_id" {
+  value = var.create_security_group == true ? aws_security_group.sg[0].id : data.aws_security_group.sg[0].id
 }
