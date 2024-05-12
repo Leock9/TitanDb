@@ -6,16 +6,21 @@ output "default_vpc_id" {
   value = data.aws_vpc.default.id
 }
 
-data "aws_subnet_ids" "by_az" {
-  for_each = toset(var.availability_zones)
+data "aws_subnets" "by_az" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
 
-  availability_zone = each.value
+  tags = {
+    Name = "*"
+  }
 }
 
 output "subnet_ids_by_az" {
   value = {
-    for subnet_ids in data.aws_subnet_ids.by_az.ids :
-    subnet_ids.availability_zone => subnet_ids.id
+    for subnet in data.aws_subnets.by_az.ids :
+    data.aws_subnet.by_az[subnet].availability_zone => subnet
   }
 }
 
@@ -49,7 +54,12 @@ resource "aws_security_group" "sg" {
 }
 
 data "aws_subnet" "example" {
-  id = tolist(data.aws_subnet_ids.by_az.ids)[0]
+  id = tolist(data.aws_subnets.by_az.ids)[0]
+}
+
+variable "projectName" {
+  type    = string
+  default = "example"
 }
 
 variable "availability_zones" {
