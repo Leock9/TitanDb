@@ -57,11 +57,6 @@ data "aws_subnet" "example" {
   id = tolist(data.aws_subnets.by_az.ids)[0]
 }
 
-variable "projectName" {
-  type    = string
-  default = "example"
-}
-
 variable "availability_zones" {
   type    = list(string)
   default = ["us-east-1a", "us-east-1b", "us-east-1c"]
