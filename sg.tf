@@ -1,6 +1,12 @@
+data "aws_default_vpc" "default" {}
+
+output "default_vpc_id" {
+  value = data.aws_default_vpc.default.id
+}
+
 resource "aws_security_group" "sg" {
   name        = "SG-${var.projectName}"
-  vpc_id = var.vpcId
+  vpc_id = default_vpc_id.id
 
   ingress {
     description = "All"
