@@ -1,26 +1,27 @@
-data "aws_default_vpc" "default" {}
+data "aws_vpc" "default" {
+  default = true
+}
 
 output "default_vpc_id" {
-  value = data.aws_default_vpc.default.id
+  value = data.aws_vpc.default.id
 }
 
-data "aws_subnets" "by_az" {
-  filter {
-    name   = "availability-zone"
-    values = ["us-east-1a", "us-east-1b", "us-east-1c"]
-  }
+data "aws_subnet_ids" "by_az" {
+  for_each = toset(var.availability_zones)
+
+  availability_zone = each.value
 }
 
-output "subnets_by_az" {
+output "subnet_ids_by_az" {
   value = {
-    for subnet in data.aws_subnets.by_az.subnets :
-    subnet.availability_zone => subnet.id
+    for subnet_ids in data.aws_subnet_ids.by_az.ids :
+    subnet_ids.availability_zone => subnet_ids.id
   }
 }
 
 resource "aws_security_group" "sg" {
   name        = "SG-${var.projectName}"
-  vpc_id      = data.aws_default_vpc.default.id
+  vpc_id      = data.aws_vpc.default.id
 
   ingress {
     description = "All"
@@ -35,7 +36,7 @@ resource "aws_security_group" "sg" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = [values(output.subnets_by_az)[data.aws_subnet.example.availability_zone]]
+    cidr_blocks = [values(output.subnet_ids_by_az)[data.aws_subnet.example.availability_zone]]
   }
 
   egress {
@@ -48,5 +49,10 @@ resource "aws_security_group" "sg" {
 }
 
 data "aws_subnet" "example" {
-  id = tolist(data.aws_subnets.by_az.ids)[0]
+  id = tolist(data.aws_subnet_ids.by_az.ids)[0]
+}
+
+variable "availability_zones" {
+  type    = list(string)
+  default = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
