@@ -41,7 +41,7 @@ resource "aws_security_group" "sg" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = [values(output.subnet_ids_by_az)[data.aws_subnet.example.availability_zone]]
+    cidr_blocks = [values(output.subnet_ids_by_az)[values(keys(output.subnet_ids_by_az))[0]]]
   }
 
   egress {
