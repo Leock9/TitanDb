@@ -23,7 +23,7 @@ resource "aws_security_group" "sg" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["172.31.32.0/20", "172.31.0.0/20", "172.31.80.0/20" ]
+    cidr_blocks = [var.vpc_cidr_block]
  }
  
   egress {
