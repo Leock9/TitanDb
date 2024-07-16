@@ -5,7 +5,7 @@ provider "aws" {
 resource "aws_db_instance" "postgres_db_soul" {
   skip_final_snapshot    = true
   allocated_storage      = 5
-  identifier             = "pgdb"
+  identifier             = "pgdbSoul"
   instance_class         = "db.t4g.micro"
   engine                 = "postgres"
   db_name                = "dbSoulMenu"
@@ -19,7 +19,7 @@ resource "aws_db_instance" "postgres_db_soul" {
 resource "aws_db_instance" "postgres_db_hermes" {
   skip_final_snapshot    = true
   allocated_storage      = 5
-  identifier             = "pgdb"
+  identifier             = "pgdbHermes"
   instance_class         = "db.t4g.micro"
   engine                 = "postgres"
   db_name                = "dbHermesControl"
