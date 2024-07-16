@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-    
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,10 +20,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
-          
+
       - name: Checkout código
         uses: actions/checkout@v2
-      
+
       - name: Instalar Terraform
         run: |
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -47,3 +47,7 @@ jobs:
 
       - name: Saída do estado do Terraform
         run: terraform output
+
+      - name: Destruir recursos em caso de falha
+        if: failure()
+        run: terraform destroy -auto-approve -var="DB_USERNAME=${DB_USERNAME}" -var="DB_PASSWORD=${DB_PASSWORD}"
